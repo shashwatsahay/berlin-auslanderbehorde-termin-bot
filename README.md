@@ -1,4 +1,26 @@
+# Forked modifications
+
+This has been forked from https://github.com/capital-G/berlin-auslanderbehorde-termin-bot and modified to work on windows with some other requirements being modified 
+
+## Setup
+
+* `git clone https://github.com/capital-G/berlin-auslanderbehorde-termin-bot.git`
+* Install python 3.6 
+* Install dependencies via `pip install -r requirements.txt`
+* Configure `berlin_bot.py` according to your needs (see below)
+* Start the bot via `python3 berlin_bot.py`
+
+I will mostly not provide support for this but still leave your issues and if I have time I will try to solve them as much as possible.
+
+# TroubleShoot
+One problem that i foresee is that your chrome browser is not the same version as the driver provided in this github repo hence not compatible anymore please update that in the chromedriver_win32 folder
+
+The original ReadMe as was written by Dennis is below
+
+Happy Coding!!!
+
 # Berlin Ausländerbehörde Termin Bot
+
 
 A [Selenium](https://www.selenium.dev/) bot for obtaining an appointment at the [Landesamt für Einwanderung](https://otv.verwalt-berlin.de/ams/TerminBuchen) aka Ausänderbehörde in Berlin.
 

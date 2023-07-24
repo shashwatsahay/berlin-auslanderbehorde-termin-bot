@@ -6,8 +6,9 @@ from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
-
+from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.chrome.service import Service
 
 system = system()
 
@@ -19,14 +20,16 @@ logging.basicConfig(
 class WebDriver:
     def __init__(self):
         self._driver: webdriver.Chrome
-        self._implicit_wait_time = 20
+        self._implicit_wait_time = 10
 
     def __enter__(self) -> webdriver.Chrome:
         logging.info("Open browser")
         # some stuff that prevents us from being locked out
+        homedir = os.path.expanduser("~")
+        webdriver_service=os.path.join(os.getcwd(), "chromedriver_win32\chromedriver.exe")
         options = webdriver.ChromeOptions() 
         options.add_argument('--disable-blink-features=AutomationControlled')
-        self._driver = webdriver.Chrome(options=options)
+        self._driver = webdriver.Chrome(executable_path=webdriver_service, options=options)
         self._driver.implicitly_wait(self._implicit_wait_time) # seconds
         self._driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
         self._driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.53 Safari/537.36'})
@@ -38,7 +41,7 @@ class WebDriver:
 
 class BerlinBot:
     def __init__(self):
-        self.wait_time = 20
+        self.wait_time = 10
         self._sound_file = os.path.join(os.getcwd(), "alarm.wav")
         self._error_message = """Für die gewählte Dienstleistung sind aktuell keine Termine frei! Bitte"""
 
@@ -46,46 +49,63 @@ class BerlinBot:
     def enter_start_page(driver: webdriver.Chrome):
         logging.info("Visit start page")
         driver.get("https://otv.verwalt-berlin.de/ams/TerminBuchen")
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="mainForm"]/div/div/div/div/div/div/div/div/div/div[1]/div[1]/div[2]/a')))
         driver.find_element(By.XPATH, '//*[@id="mainForm"]/div/div/div/div/div/div/div/div/div/div[1]/div[1]/div[2]/a').click()
-        time.sleep(5)
+        # time.sleep(5)
 
     @staticmethod
     def tick_off_some_bullshit(driver: webdriver.Chrome):
         logging.info("Ticking off agreement")
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="xi-div-1"]/div[4]/label[2]/p')))
         driver.find_element(By.XPATH, '//*[@id="xi-div-1"]/div[4]/label[2]/p').click()
-        time.sleep(1)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'applicationForm:managedForm:proceed')))
         driver.find_element(By.ID, 'applicationForm:managedForm:proceed').click()
-        time.sleep(5)
+        # time.sleep(5)
 
     @staticmethod
     def enter_form(driver: webdriver.Chrome):
         logging.info("Fill out form")
         # select china
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-400')))
         s = Select(driver.find_element(By.ID, 'xi-sel-400'))
-        s.select_by_visible_text("China")
+        s.select_by_visible_text("Indien")
         # eine person
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-422')))
         s = Select(driver.find_element(By.ID, 'xi-sel-422'))
         s.select_by_visible_text("eine Person")
         # no family
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-427')))
         s = Select(driver.find_element(By.ID, 'xi-sel-427' ))
-        s.select_by_visible_text("nein")
-        time.sleep(5)
+        s.select_by_visible_text("ja")
+        # time.sleep(5)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-428')))
+        s = Select(driver.find_element(By.ID, 'xi-sel-428' ))
+        s.select_by_visible_text("Indien")
+        # time.sleep(5)
 
         # extend stay
-        driver.find_element(By.XPATH, '//*[@id="xi-div-30"]/div[2]/label/p').click()
-        time.sleep(2)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="xi-div-30"]/div[1]/label/p')))
+        driver.find_element(By.XPATH, '//*[@id="xi-div-30"]/div[1]/label/p').click()
+        # time.sleep(2)
 
         # click on study group
-        driver.find_element(By.XPATH, '//*[@id="inner-479-0-2"]/div/div[1]/label/p').click()
-        time.sleep(2)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="inner-436-0-1"]/div/div[5]/label/p')))
+        driver.find_element(By.XPATH, '//*[@id="inner-436-0-1"]/div/div[5]/label/p').click()
+        # time.sleep(2)
 
         # b/c of stufy
-        driver.find_element(By.XPATH, '//*[@id="inner-479-0-2"]/div/div[2]/div/div[5]/label').click()
-        time.sleep(4)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="inner-436-0-1"]/div/div[6]/div/div[2]/label')))
+        driver.find_element(By.XPATH, '//*[@id="inner-436-0-1"]/div/div[6]/div/div[2]/label').click()
+        # time.sleep(4)
 
         # submit form
+        # print(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+        WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'applicationForm:managedForm:proceed')))
         driver.find_element(By.ID, 'applicationForm:managedForm:proceed').click()
-        time.sleep(10)
+        # time.sleep(30)
+        WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+        WebDriverWait(driver, 100).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
     
     def _success(self):
         logging.info("!!!SUCCESS - do not close the window!!!!")
@@ -103,12 +123,16 @@ class BerlinBot:
             self.enter_form(driver)
 
             # retry submit
-            for _ in range(10):
+            for _ in range(30):
                 if not self._error_message in driver.page_source:
                     self._success()
                 logging.info("Retry submitting form")
+                # print(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+                WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+                WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'applicationForm:managedForm:proceed')))
                 driver.find_element(By.ID, 'applicationForm:managedForm:proceed').click()
-                time.sleep(self.wait_time)
+                WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+                WebDriverWait(driver, 100).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
 
     def run_loop(self):
         # play sound to check if it works
@@ -130,25 +154,24 @@ class BerlinBot:
         http://stackoverflow.com/a/34568298/901641
         I never would have tried using AppKit.NSSound without seeing his code.
         """
-        from AppKit import NSSound
-        from Foundation import NSURL
-        from time import sleep
-
+        from playsound import playsound
+        
         logging.info("Play sound")
-        if "://" not in sound:
-            if not sound.startswith("/"):
-                from os import getcwd
+        playsound(sound)
+        # if "://" not in sound:
+        #     if not sound.startswith("/"):
+        #         from os import getcwd
 
-                sound = getcwd() + "/" + sound
-            sound = "file://" + sound
-        url = NSURL.URLWithString_(sound)
-        nssound = NSSound.alloc().initWithContentsOfURL_byReference_(url, True)
-        if not nssound:
-            raise IOError("Unable to load sound named: " + sound)
-        nssound.play()
+        #         sound = getcwd() + "/" + sound
+        #     sound = "file://" + sound
+        # url = NSURL.URLWithString_(sound)
+        # nssound = NSSound.alloc().initWithContentsOfURL_byReference_(url, True)
+        # if not nssound:
+        #     raise IOError("Unable to load sound named: " + sound)
+        # nssound.play()
 
-        if block:
-            sleep(nssound.duration())
+        # if block:
+        #     sleep(nssound.duration())
 
 if __name__ == "__main__":
     BerlinBot().run_loop()
