@@ -4,7 +4,7 @@ This has been forked from https://github.com/capital-G/berlin-auslanderbehorde-t
 
 ## Setup
 
-* `git clone https://github.com/capital-G/berlin-auslanderbehorde-termin-bot.git`
+* `git clone https://github.com/shashwatsahay/berlin-auslanderbehorde-termin-bot.git`
 * Install python 3.6 
 * Install dependencies via `pip install -r requirements.txt`
 * Configure `berlin_bot.py` according to your needs (see below)
