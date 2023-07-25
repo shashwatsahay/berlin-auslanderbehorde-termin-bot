@@ -1,2 +1,2 @@
-selenium==3.141.0
-playsound
+selenium==3
+playsound==1.2.2
