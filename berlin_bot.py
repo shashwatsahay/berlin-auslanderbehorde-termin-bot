@@ -119,23 +119,26 @@ class BerlinBot:
 
     def run_once(self):
         with WebDriver() as driver:
-            self.enter_start_page(driver)
-            self.tick_off_some_bullshit(driver)
-            self.enter_form(driver)
-            flag=False
-            # retry submit
-            for _ in range(30):
-                if not self._error_message in driver.page_source:
-                    self._success()
-                logging.info("Retry submitting form")
-                if driver.find_elements(By.CSS_SELECTOR, "div.loading"):
-                    WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
-                flag=True
-                WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'applicationForm:managedForm:proceed')))
-                driver.find_element(By.ID, 'applicationForm:managedForm:proceed').click()
-                if driver.find_elements(By.CSS_SELECTOR, "div.loading"):
-                    WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
-                WebDriverWait(driver, 100).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+            try:
+                self.enter_start_page(driver)
+                self.tick_off_some_bullshit(driver)
+                self.enter_form(driver)
+                # retry submit
+                for _ in range(30):
+                    if not self._error_message in driver.page_source:
+                        self._success()
+                    logging.info("Retry submitting form")
+                    if driver.find_elements(By.CSS_SELECTOR, "div.loading"):
+                        WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+                    flag=True
+                    WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'applicationForm:managedForm:proceed')))
+                    driver.find_element(By.ID, 'applicationForm:managedForm:proceed').click()
+                    if driver.find_elements(By.CSS_SELECTOR, "div.loading"):
+                        WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
+                    WebDriverWait(driver, 100).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+            except Exception as e:
+                print(e)
+                pass
 
     def run_loop(self):
         # play sound to check if it works
