@@ -69,34 +69,36 @@ class BerlinBot:
         WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-400')))
         s = Select(driver.find_element(By.ID, 'xi-sel-400'))
         s.select_by_visible_text("Indien")
+        time.sleep(2)
         # eine person
         WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-422')))
         s = Select(driver.find_element(By.ID, 'xi-sel-422'))
         s.select_by_visible_text("eine Person")
+        time.sleep(2)
         # no family
         WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-427')))
         s = Select(driver.find_element(By.ID, 'xi-sel-427' ))
         s.select_by_visible_text("ja")
-        # time.sleep(5)
+        time.sleep(2)
         WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'xi-sel-428')))
         s = Select(driver.find_element(By.ID, 'xi-sel-428' ))
         s.select_by_visible_text("Indien")
-        # time.sleep(5)
+        time.sleep(2)
 
         # extend stay
-        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="xi-div-30"]/div[1]/label/p')))
-        driver.find_element(By.XPATH, '//*[@id="xi-div-30"]/div[1]/label/p').click()
-        # time.sleep(2)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="xi-div-30"]/div[2]/label/p')))
+        driver.find_element(By.XPATH, '//*[@id="xi-div-30"]/div[2]/label/p').click()
+        time.sleep(2)
 
         # click on study group
-        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="inner-436-0-1"]/div/div[5]/label/p')))
-        driver.find_element(By.XPATH, '//*[@id="inner-436-0-1"]/div/div[5]/label/p').click()
-        # time.sleep(2)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="inner-436-0-2"]/div/div[5]/label/p')))
+        driver.find_element(By.XPATH, '//*[@id="inner-436-0-2"]/div/div[5]/label/p').click()
+        time.sleep(2)
 
         # b/c of stufy
-        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="inner-436-0-1"]/div/div[6]/div/div[2]/label')))
-        driver.find_element(By.XPATH, '//*[@id="inner-436-0-1"]/div/div[6]/div/div[2]/label').click()
-        # time.sleep(4)
+        WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.XPATH, '//*[@id="inner-436-0-2"]/div/div[6]/div/div[2]/label')))
+        driver.find_element(By.XPATH, '//*[@id="inner-436-0-2"]/div/div[6]/div/div[3]/label').click()
+        time.sleep(4)
 
         # submit form
         # print(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
@@ -104,15 +106,15 @@ class BerlinBot:
         WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
         WebDriverWait(driver, 100).until(expected_conditions.presence_of_element_located((By.ID, 'applicationForm:managedForm:proceed')))
         driver.find_element(By.ID, 'applicationForm:managedForm:proceed').click()
-        # time.sleep(30)
         WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
         WebDriverWait(driver, 100).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        time.sleep(5)
     
     def _success(self):
         logging.info("!!!SUCCESS - do not close the window!!!!")
         while True:
             self._play_sound_osx(self._sound_file)
-            time.sleep(15)
+            time.sleep(30)
         
         # todo play something and block the browser
 
@@ -136,6 +138,7 @@ class BerlinBot:
                     if driver.find_elements(By.CSS_SELECTOR, "div.loading"):
                         WebDriverWait(driver, 100).until(expected_conditions.invisibility_of_element((By.CSS_SELECTOR, "div.loading")))
                     WebDriverWait(driver, 100).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
+                    time.sleep(2)
             except Exception as e:
                 print(e)
                 pass
