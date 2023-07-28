@@ -127,7 +127,7 @@ class BerlinBot:
                 self.enter_form(driver)
                 # retry submit
                 for _ in range(30):
-                    if not self._error_message in driver.page_source:
+                    if "Auswahl Uhrzeit" in driver.page_source or  'Familiäre Gründe' not in driver.page_source:
                         self._success()
                     logging.info("Retry submitting form")
                     if driver.find_elements(By.CSS_SELECTOR, "div.loading"):
